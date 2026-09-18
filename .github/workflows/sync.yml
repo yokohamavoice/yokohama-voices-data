@@ -1,0 +1,41 @@
+name: Save public dialogue data
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: public-data-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: vars.PUBLIC_SYNC_ENABLED == 'true' && vars.SITE_ORIGIN != '' && vars.PUBLIC_DATA_REPOSITORY != '' && vars.PROJECT_OPERATOR_LOGIN != '' && github.repository == vars.PUBLIC_DATA_REPOSITORY && github.ref == 'refs/heads/main' && github.actor == vars.PROJECT_OPERATOR_LOGIN && github.triggering_actor == vars.PROJECT_OPERATOR_LOGIN
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Fetch and validate public data
+        env:
+          PUBLIC_SYNC_ENABLED: ${{ vars.PUBLIC_SYNC_ENABLED }}
+          SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+          PUBLIC_DATA_REPOSITORY: ${{ vars.PUBLIC_DATA_REPOSITORY }}
+          PROJECT_OPERATOR_LOGIN: ${{ vars.PROJECT_OPERATOR_LOGIN }}
+        run: node scripts/sync.mjs
+      - name: Save changed data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data
+          if [ -d releases ]; then git add releases; fi
+          if git diff --cached --quiet; then
+            echo 'Public data has not changed.'
+            exit 0
+          fi
+          git commit -m 'Update public dialogue data'
+          git push
