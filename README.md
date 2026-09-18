@@ -16,10 +16,10 @@
 
 - `data/manifest.json`：最新の承認済み版への参照。**Code → Download ZIP** で取得できます。
 - `releases/<公開版ID>/dataset.json`：版ごとに固定したルート。schema 3では同じフォルダの `parts/` も一緒に取得します。
-- サイトの `/api/export`：最新の承認済みの版。サイトのURLは専用の公開先が決まってから案内します。
-- サイトの `/technology` に技術解説、`/research` に研究利用とデータ公開の説明があります。
+- [サイトの公開データ配布口](https://yokohama-voices.yokohama-voices.workers.dev/api/export)：最新の承認済みの版。最初の公開承認までは「確認中」と表示します。
+- [技術解説](https://yokohama-voices.yokohama-voices.workers.dev/technology)と、[研究利用・データ公開の説明](https://yokohama-voices.yokohama-voices.workers.dev/research)もご覧ください。
 
-運営者が公開用データを確認し、その版を公開した後に、自動保存処理が取り込みます。サイトとの接続が完了するまでは、この処理は停止しています。有効化後は原則毎時17分に確認します。公開候補の作成後に増えた回答は、その版には入りません。
+運営者が公開用データを確認し、その版を公開した後に、自動保存処理が取り込みます。サイトとの接続は完了しており、原則毎時17分に新しい公開版がないか確認します。公開候補の作成後に増えた回答は、その版には入りません。
 
 | ファイル | 内容 |
 | --- | --- |
